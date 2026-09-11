@@ -60,9 +60,24 @@ pub fn run_json<T: for<'de> Deserialize<'de>>(args: &[&str]) -> Result<T, Comman
 }
 
 pub fn run_plain(args: &[&str]) -> Result<String, CommandFailure> {
-    let output = Command::new(binary())
+    run_plain_with_input(args, "")
+}
+
+pub fn run_plain_with_input(args: &[&str], stdin_text: &str) -> Result<String, CommandFailure> {
+    use std::io::Write;
+    use std::process::Stdio;
+    let mut child = Command::new(binary())
         .args(args)
-        .output()
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| CommandFailure { command: describe(args), message: e.to_string() })?;
+    if let Some(mut stdin) = child.stdin.take() {
+        let _ = stdin.write_all(stdin_text.as_bytes());
+    }
+    let output = child
+        .wait_with_output()
         .map_err(|e| CommandFailure { command: describe(args), message: e.to_string() })?;
     let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
     let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();

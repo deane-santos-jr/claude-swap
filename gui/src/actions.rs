@@ -101,7 +101,7 @@ fn perform(action: &Action) -> Result<Option<Outcome>, String> {
         Action::SwitchBest => switch(&["--strategy", "best"]),
         Action::SwitchNextAvailable => switch(&["--strategy", "next-available"]),
         Action::AddCurrentLogin => plain(&["add"]),
-        Action::Remove(n) => plain(&["remove", &n.to_string()]),
+        Action::Remove(n) => confirmed(&["remove", &n.to_string()]),
         Action::Disable(n) => plain(&["disable", &n.to_string()]),
         Action::Enable(n) => plain(&["enable", &n.to_string()]),
         Action::OpenTerminal(n) => {
@@ -157,6 +157,11 @@ fn switch(extra: &[&str]) -> Result<Option<Outcome>, String> {
         (false, _, None) => "Not switched.".to_string(),
     };
     Ok(Some(Outcome::Notice(text)))
+}
+
+fn confirmed(args: &[&str]) -> Result<Option<Outcome>, String> {
+    let text = cswap::run_plain_with_input(args, "y\n").map_err(|e| e.to_string())?;
+    Ok(Some(Outcome::Notice(text.lines().last().unwrap_or_default().to_string())))
 }
 
 fn plain(args: &[&str]) -> Result<Option<Outcome>, String> {
