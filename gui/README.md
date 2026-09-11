@@ -26,7 +26,17 @@ cp -R "target/Claude Swap.app" ~/Applications/
 - **Add current login** snapshots whatever account Claude Code is logged in as right now (`cswap add`). Run `/login` in Claude Code first to add a different account.
 - **Resume in Terminal** takes a Claude desktop app Code session and reopens it in Terminal under the chosen account (`cswap run N --share-history -- --resume <id>`). The desktop app keeps its own login and cannot be switched from outside.
 
-Usage numbers refresh every minute and after every action.
+Usage numbers refresh every minute and after every action. Each card says when its numbers were measured.
+
+## Keeping the numbers live
+
+Anthropic's usage endpoint has a small request budget and answers HTTP 429 for up to an hour once it is spent, at which point cswap can only serve its last measurement. Claude Code, however, receives the account's live 5-hour and 7-day usage with every reply and hands it to the status line. `statusline/install.sh` wraps your status-line command with a hook that pipes that JSON into `cswap ingest-usage`, which writes it into the same cache the window, the CLI and the auto-switcher read. From then on the active account is exact to the last reply, and the endpoint is only needed for idle accounts.
+
+```bash
+gui/statusline/install.sh
+```
+
+The hook runs `cswap ingest-usage` only when the numbers change, in the background, so status-line rendering stays instant.
 
 ## Xirp, VS Code and other hosts that spawn `claude` themselves
 

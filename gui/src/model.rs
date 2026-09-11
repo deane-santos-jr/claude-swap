@@ -23,8 +23,12 @@ pub struct AccountRow {
     pub last_good_usage: Option<Usage>,
     #[serde(rename = "lastGoodAgeSeconds")]
     pub last_good_age_seconds: Option<f64>,
+    #[serde(rename = "usageAgeSeconds")]
+    pub usage_age_seconds: Option<f64>,
     #[serde(rename = "usageError")]
     pub usage_error: Option<String>,
+    #[serde(rename = "usageRetryAt")]
+    pub usage_retry_at: Option<String>,
     pub alias: Option<String>,
     #[serde(default)]
     pub disabled: bool,

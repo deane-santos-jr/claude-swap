@@ -1008,6 +1008,10 @@ def main() -> None:
     if argv and argv[0] == "unclaimed":
         _unclaimed_command(argv[1:])
         return
+    if argv and argv[0] == "ingest-usage":
+        from claude_swap.live_usage import main as ingest_main
+
+        sys.exit(ingest_main(argv[1:]))
     if argv and argv[0] == "alias":
         _alias_command(argv[1:])
         return

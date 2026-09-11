@@ -217,7 +217,7 @@ impl App {
                     .last_usage_refresh
                     .map(|t| timefmt::age(t.elapsed().as_secs_f64()))
                     .unwrap_or_else(|| "never".into());
-                ui.label(RichText::new(format!("updated {age}")).small().color(muted(ui)));
+                ui.label(RichText::new(format!("checked {age}")).small().color(muted(ui)));
             });
         });
         ui.add_space(6.0);
@@ -340,11 +340,17 @@ impl App {
                         if let Some(spend) = &usage.spend {
                             spend_bar(ui, spend);
                         }
+                        let age = if fresh { row.usage_age_seconds } else { row.last_good_age_seconds };
+                        let mut note = format!("measured {}", age.map(timefmt::age).unwrap_or_else(|| "at an unknown time".into()));
                         if !fresh {
-                            let age = row.last_good_age_seconds.map(timefmt::age).unwrap_or_default();
-                            let why = row.usage_error.clone().unwrap_or_else(|| "stale".into());
-                            ui.label(RichText::new(format!("last known numbers, {age} ({why})")).small().color(warn()));
+                            note.push_str(" · too old to drive switching");
                         }
+                        if let Some(retry) = &row.usage_retry_at {
+                            note.push_str(&format!(" · usage API backing off until {}", timefmt::clock(retry)));
+                        } else if let Some(err) = &row.usage_error {
+                            note.push_str(&format!(" · {err}"));
+                        }
+                        ui.label(RichText::new(note).small().color(if fresh { muted(ui) } else { warn() }));
                     }
                     None => {
                         let why = row.usage_error.clone().unwrap_or_else(|| "no usage data".into());
