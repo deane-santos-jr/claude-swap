@@ -1,5 +1,13 @@
 # claude-swap
 
+> [!NOTE]
+> **This is my fork of [realiti4/claude-swap](https://github.com/realiti4/claude-swap).** `main` tracks upstream, and everything below this note is the upstream README. My additions live on the [`rust-gui`](https://github.com/deane-santos-jr/claude-swap/tree/rust-gui) branch:
+>
+> - **A native macOS window** in Rust (egui): every account's usage meters, one-click switching, background auto-switch, and resuming a rate-limited Claude desktop session in Terminal. It now lives in its own repo, [claude-swap-gui](https://github.com/deane-santos-jr/claude-swap-gui).
+> - **`cswap ingest-usage`**: a status-line hook feeds Claude Code's live 5-hour and 7-day usage into the usage cache, so the numbers stay current when Anthropic's usage endpoint starts answering HTTP 429.
+>
+> <img src="https://raw.githubusercontent.com/deane-santos-jr/claude-swap-gui/main/docs/screenshot.png" width="480" alt="Claude Swap for macOS showing four demo accounts with usage meters">
+
 Multi-account switcher for Claude Code. Easily switch between multiple Claude accounts without logging out, or let it switch for you before you hit a rate limit. Track usage for every account in a live dashboard, and run accounts in parallel. Works with both the Claude Code CLI and the VS Code extension.
 
 ## Installation
